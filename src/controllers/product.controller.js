@@ -99,7 +99,9 @@ const getProductsWithRatings = async (query, limit = 20, offset = 0) => {
 
 const getCollectionsPage = async (req, res) => {
   try {
-    const category = req.query.category;
+    // Support both single category (backward compatibility) and multiple categories
+    const queryCategories = req.query.categories ? (Array.isArray(req.query.categories) ? req.query.categories : [req.query.categories]) : null;
+    const category = req.query.category; // For backward compatibility
     const search = req.query.search;
     const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : null;
     const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : null;
@@ -118,7 +120,10 @@ const getCollectionsPage = async (req, res) => {
       });
     }
     
-    if (category && category !== 'all') {
+    // Handle multiple categories or single category
+    if (queryCategories && queryCategories.length > 0) {
+      query = query.whereIn('category', queryCategories);
+    } else if (category && category !== 'all') {
       query = query.where({ category });
     }
     
@@ -165,11 +170,16 @@ const getCollectionsPage = async (req, res) => {
       .max('price as max')
       .first();
     
+    // Determine selected categories for view
+    const selectedCategories = queryCategories && queryCategories.length > 0 ? queryCategories : (category && category !== 'all' ? [category] : []);
+    
     res.render('user/collections', {
       title: 'Collections - Shubham Garments',
       products,
       categories,
-      selectedCategory: category || 'all',
+      selectedCategory: selectedCategories.length > 0 ? selectedCategories : 'all',
+      selectedCategories: selectedCategories,
+      req: req, // Pass req for URL parsing in view
       searchQuery: search || '',
       minPrice: minPrice || '',
       maxPrice: maxPrice || '',
@@ -193,7 +203,9 @@ const getCollectionsPage = async (req, res) => {
 // Get catalog page
 const getCatalogPage = async (req, res) => {
   try {
-    const category = req.query.category;
+    // Support both single category (backward compatibility) and multiple categories
+    const queryCategories = req.query.categories ? (Array.isArray(req.query.categories) ? req.query.categories : [req.query.categories]) : null;
+    const category = req.query.category; // For backward compatibility
     const search = req.query.search;
     const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : null;
     const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : null;
@@ -212,7 +224,10 @@ const getCatalogPage = async (req, res) => {
       });
     }
     
-    if (category && category !== 'all') {
+    // Handle multiple categories or single category
+    if (queryCategories && queryCategories.length > 0) {
+      query = query.whereIn('category', queryCategories);
+    } else if (category && category !== 'all') {
       query = query.where({ category });
     }
     
@@ -259,11 +274,16 @@ const getCatalogPage = async (req, res) => {
       .max('price as max')
       .first();
     
+    // Determine selected categories for view
+    const selectedCategories = queryCategories && queryCategories.length > 0 ? queryCategories : (category && category !== 'all' ? [category] : []);
+    
     res.render('user/catalog', {
       title: 'Catalog - Shubham Garments',
       products,
       categories,
-      selectedCategory: category || 'all',
+      selectedCategory: selectedCategories.length > 0 ? selectedCategories : 'all',
+      selectedCategories: selectedCategories,
+      req: req, // Pass req for URL parsing in view
       searchQuery: search || '',
       minPrice: minPrice || '',
       maxPrice: maxPrice || '',
@@ -287,7 +307,9 @@ const getCatalogPage = async (req, res) => {
 // API: Get more products for collections (infinite scroll)
 const getMoreCollections = async (req, res) => {
   try {
-    const category = req.query.category;
+    // Support both single category (backward compatibility) and multiple categories
+    const queryCategories = req.query.categories ? (Array.isArray(req.query.categories) ? req.query.categories : [req.query.categories]) : null;
+    const category = req.query.category; // For backward compatibility
     const search = req.query.search;
     const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : null;
     const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : null;
@@ -306,7 +328,10 @@ const getMoreCollections = async (req, res) => {
       });
     }
     
-    if (category && category !== 'all') {
+    // Handle multiple categories or single category
+    if (queryCategories && queryCategories.length > 0) {
+      query = query.whereIn('category', queryCategories);
+    } else if (category && category !== 'all') {
       query = query.where({ category });
     }
     
@@ -350,7 +375,9 @@ const getMoreCollections = async (req, res) => {
 // API: Get more products for catalog (infinite scroll)
 const getMoreCatalog = async (req, res) => {
   try {
-    const category = req.query.category;
+    // Support both single category (backward compatibility) and multiple categories
+    const queryCategories = req.query.categories ? (Array.isArray(req.query.categories) ? req.query.categories : [req.query.categories]) : null;
+    const category = req.query.category; // For backward compatibility
     const search = req.query.search;
     const minPrice = req.query.minPrice ? parseFloat(req.query.minPrice) : null;
     const maxPrice = req.query.maxPrice ? parseFloat(req.query.maxPrice) : null;
@@ -369,7 +396,10 @@ const getMoreCatalog = async (req, res) => {
       });
     }
     
-    if (category && category !== 'all') {
+    // Handle multiple categories or single category
+    if (queryCategories && queryCategories.length > 0) {
+      query = query.whereIn('category', queryCategories);
+    } else if (category && category !== 'all') {
       query = query.where({ category });
     }
     

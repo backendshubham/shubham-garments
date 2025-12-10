@@ -20,8 +20,17 @@
                             
                             <div class="col-md-6 mb-3">
                                 <label for="customer_phone" class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
-                                <input type="tel" class="form-control" id="customer_phone" name="customer_phone" 
-                                       pattern="[0-9]{10}" placeholder="10 digit mobile number" required>
+                                <div class="input-group">
+                                    <span class="input-group-text" style="background: #f8f9fa; border-right: none;"><i class="bi bi-telephone"></i></span>
+                                    <span class="input-group-text" style="background: #f8f9fa; border-left: none; border-right: none; color: var(--veera-gray); font-weight: 500;">+91</span>
+                                    <input type="tel" class="form-control" id="customer_phone" name="customer_phone" 
+                                           pattern="[0-9]{10}" 
+                                           maxlength="10" 
+                                           placeholder="Enter 10 digit number"
+                                           style="border-left: none; padding-left: 0;"
+                                           required
+                                           oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                                </div>
                                 <small class="text-muted">Enter 10 digit mobile number</small>
                             </div>
                         </div>
@@ -107,6 +116,69 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Phone number validation
+    const phoneInput = document.getElementById('customer_phone');
+    if (phoneInput) {
+        phoneInput.addEventListener('input', function(e) {
+            // Remove any non-digit characters
+            this.value = this.value.replace(/[^0-9]/g, '');
+            
+            // Limit to 10 digits
+            if (this.value.length > 10) {
+                this.value = this.value.slice(0, 10);
+            }
+        });
+        
+        phoneInput.addEventListener('blur', function(e) {
+            if (this.value.length !== 10 && this.value.length > 0) {
+                this.setCustomValidity('Phone number must be exactly 10 digits');
+                this.reportValidity();
+            } else {
+                this.setCustomValidity('');
+            }
+        });
+        
+        // Pincode validation
+        const pincodeInput = document.getElementById('pincode');
+        if (pincodeInput) {
+            pincodeInput.addEventListener('input', function(e) {
+                // Remove any non-digit characters
+                this.value = this.value.replace(/[^0-9]/g, '');
+                
+                // Limit to 6 digits
+                if (this.value.length > 6) {
+                    this.value = this.value.slice(0, 6);
+                }
+            });
+        }
+        
+        // Form submission validation
+        const form = document.getElementById('checkoutForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const phone = phoneInput.value.replace(/\D/g, '');
+                if (phone.length !== 10) {
+                    e.preventDefault();
+                    phoneInput.setCustomValidity('Phone number must be exactly 10 digits');
+                    phoneInput.reportValidity();
+                    phoneInput.focus();
+                    return false;
+                }
+                
+                const pincode = pincodeInput ? pincodeInput.value.replace(/\D/g, '') : '';
+                if (pincode && pincode.length !== 6) {
+                    e.preventDefault();
+                    pincodeInput.setCustomValidity('Pincode must be exactly 6 digits');
+                    pincodeInput.reportValidity();
+                    pincodeInput.focus();
+                    return false;
+                }
+            });
+        }
+    }
+</script>
 
 <%- include('../partials/footer') %>
 

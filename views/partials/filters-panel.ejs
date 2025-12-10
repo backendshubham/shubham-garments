@@ -46,16 +46,27 @@
         <div class="filter-section">
             <h6 class="filter-title"><i class="bi bi-tags"></i> Categories</h6>
             <div class="category-checkboxes">
-                <div class="form-check mb-2">
-                    <input class="form-check-input" type="radio" name="filterCategory" id="filterCategoryAll" 
-                           value="all" <%= typeof selectedCategory !== 'undefined' && selectedCategory === 'all' ? 'checked' : '' %>>
-                    <label class="form-check-label" for="filterCategoryAll">All Categories</label>
-                </div>
+                <% 
+                // Parse selected categories from query string (can be array or single value)
+                let selectedCategories = [];
+                if (typeof selectedCategory !== 'undefined') {
+                    if (Array.isArray(selectedCategory)) {
+                        selectedCategories = selectedCategory;
+                    } else if (selectedCategory && selectedCategory !== 'all') {
+                        selectedCategories = [selectedCategory];
+                    }
+                }
+                // Also check URL params for multiple categories
+                if (typeof req !== 'undefined' && req.query && req.query.categories) {
+                    const urlCategories = Array.isArray(req.query.categories) ? req.query.categories : [req.query.categories];
+                    selectedCategories = urlCategories;
+                }
+                %>
                 <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
                     <% categories.forEach(cat => { %>
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="radio" name="filterCategory" id="filterCategory<%= cat.replace(/\s+/g, '') %>" 
-                                   value="<%= cat %>" <%= typeof selectedCategory !== 'undefined' && selectedCategory === cat ? 'checked' : '' %>>
+                            <input class="form-check-input category-checkbox" type="checkbox" name="filterCategory" id="filterCategory<%= cat.replace(/\s+/g, '') %>" 
+                                   value="<%= cat %>" <%= selectedCategories.includes(cat) ? 'checked' : '' %>>
                             <label class="form-check-label" for="filterCategory<%= cat.replace(/\s+/g, '') %>"><%= cat %></label>
                         </div>
                     <% }); %>
@@ -778,12 +789,15 @@
             applyFiltersBtn.addEventListener('click', function() {
                 const minPrice = document.getElementById('minPrice').value;
                 const maxPrice = document.getElementById('maxPrice').value;
-                const selectedCategory = document.querySelector('input[name="filterCategory"]:checked')?.value || 'all';
+                const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(cb => cb.value);
                 const sortBy = document.getElementById('sortBy').value;
                 
                 const params = new URLSearchParams();
-                if (selectedCategory && selectedCategory !== 'all') {
-                    params.append('category', selectedCategory);
+                // Add multiple categories
+                if (selectedCategories.length > 0) {
+                    selectedCategories.forEach(cat => {
+                        params.append('categories', cat);
+                    });
                 }
                 if (minPrice) params.append('minPrice', minPrice);
                 if (maxPrice) params.append('maxPrice', maxPrice);
@@ -814,7 +828,10 @@
                 maxPriceRange.value = max;
                 updatePriceRange();
                 
-                document.getElementById('filterCategoryAll').checked = true;
+                // Uncheck all category checkboxes
+                document.querySelectorAll('input[name="filterCategory"]').forEach(cb => {
+                    cb.checked = false;
+                });
                 document.getElementById('sortBy').value = currentPage === 'catalog' ? 'title' : 'created_at';
                 
                 window.location.href = '/' + currentPage;

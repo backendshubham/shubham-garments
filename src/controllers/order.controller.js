@@ -53,6 +53,20 @@ const createOrder = async (req, res) => {
       return res.redirect('/orders/checkout');
     }
     
+    // Validate phone number (10 digits)
+    const cleanPhone = customer_phone.replace(/\D/g, '');
+    if (cleanPhone.length !== 10) {
+      setFlash(req, 'error', 'Phone number must be exactly 10 digits');
+      return res.redirect('/orders/checkout');
+    }
+    
+    // Validate pincode (6 digits)
+    const cleanPincode = pincode.replace(/\D/g, '');
+    if (cleanPincode.length !== 6) {
+      setFlash(req, 'error', 'Pincode must be exactly 6 digits');
+      return res.redirect('/orders/checkout');
+    }
+    
     // Get cart items
     const cartItems = await db('cart')
       .where({ user_id: userId })
@@ -84,11 +98,11 @@ const createOrder = async (req, res) => {
       total_amount: totalAmount,
       status: 'pending',
       customer_name: customer_name.trim(),
-      customer_phone: customer_phone.trim(),
+      customer_phone: `+91${cleanPhone}`, // Store with +91 prefix
       shipping_address: shipping_address.trim(),
       city: city.trim(),
       state: state.trim(),
-      pincode: pincode.trim()
+      pincode: cleanPincode
     }).returning('*');
     
     // Create order items and update stock
@@ -113,8 +127,21 @@ const createOrder = async (req, res) => {
     res.redirect(`/orders/${order.id}`);
   } catch (error) {
     console.error('Create order error:', error);
-    setFlash(req, 'error', 'Error placing order');
-    res.redirect('/cart');
+    console.error('Error details:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    // Provide more specific error messages
+    let errorMessage = 'Error placing order. Please try again.';
+    if (error.message.includes('violates foreign key constraint')) {
+      errorMessage = 'Invalid product or user. Please refresh and try again.';
+    } else if (error.message.includes('null value')) {
+      errorMessage = 'Please fill in all required fields.';
+    } else if (error.message.includes('duplicate key')) {
+      errorMessage = 'An error occurred. Please try again.';
+    }
+    
+    setFlash(req, 'error', errorMessage);
+    res.redirect('/orders/checkout');
   }
 };
 
