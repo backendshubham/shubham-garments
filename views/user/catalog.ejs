@@ -113,7 +113,7 @@
                                 <div class="mt-1">
                                     <span class="current-price">Rs. <%= product.price.toLocaleString('en-IN', {minimumFractionDigits: 2}) %></span>
                                     <% if (product.discount_percentage && product.discount_percentage > 0) { %>
-                                        <span class="discount-badge">(-<%= product.discount_percentage %>%)</span>
+                                        <span class="discount-badge"><%= product.discount_percentage %>% OFF</span>
                                     <% } %>
                                 </div>
                             </div>
@@ -349,7 +349,7 @@
                 `<span class="original-price">Rs. ${parseFloat(product.original_price).toLocaleString('en-IN', {minimumFractionDigits: 2})}</span>` : '';
             
             const discountBadge = product.discount_percentage && product.discount_percentage > 0 ? 
-                `<span class="discount-badge">(-${product.discount_percentage}%)</span>` : '';
+                `<span class="discount-badge">${product.discount_percentage}% OFF</span>` : '';
             
             const addToCartHtml = product.stock > 0 && userId ? `
                 <form action="/cart/add" method="POST" class="d-inline w-100" id="addToCartForm${product.id}">
