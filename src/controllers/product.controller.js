@@ -26,10 +26,8 @@ const extractQRCodeNumber = (qrCodePath) => {
 // Generate full QR scanner path/URL and QR code image
 const generateQRCodePath = (req) => {
   const qrCodeNumber = generateQRCodeNumber();
-  // Get the base URL from request or use environment variable
-  const protocol = req.protocol || 'http';
-  const host = req.get('host') || process.env.BASE_URL || 'localhost:3000';
-  const baseUrl = `${protocol}://${host}`;
+  // Use production URL or environment variable, fallback to localhost for development
+  const baseUrl = process.env.BASE_URL || process.env.PRODUCTION_URL || 'https://shubhamgarments.onrender.com';
   const qrCodePath = `${baseUrl}/products/qrcode/${qrCodeNumber}`;
   
   // Generate QR code image URL using QR Server API
