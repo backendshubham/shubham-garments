@@ -2162,6 +2162,39 @@
             border-color: var(--veera-accent);
             box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
         }
+        
+        /* Breadcrumb Styling */
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .breadcrumb-item {
+            color: var(--veera-gray);
+        }
+        
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: "/";
+            color: var(--veera-gray);
+            padding: 0 0.5rem;
+        }
+        
+        .breadcrumb-item a {
+            color: var(--veera-accent-dark);
+            text-decoration: none !important;
+            transition: color 0.2s ease;
+        }
+        
+        .breadcrumb-item a:hover {
+            color: var(--veera-accent);
+            text-decoration: none !important;
+        }
+        
+        .breadcrumb-item.active {
+            color: var(--veera-text);
+        }
     </style>
 </head>
 <body>
