@@ -726,18 +726,45 @@ const adminCreateProduct = async (req, res) => {
       existingQRCode = await db('products').where('qr_code', 'like', `%${qrCodeNumber}%`).first();
     }
     
-    await db('products').insert({
-      title,
-      description,
-      price: sellingPrice,
-      original_price: originalPrice,
-      discount_percentage: finalDiscount,
-      image: imageUrl,
-      stock: parseInt(stock),
-      category,
-      qr_code: qrCodePath, // Store full path
-      qr_code_image: qrCodeImageUrl // Store QR code image URL
-    });
+    try {
+      await db('products').insert({
+        title,
+        description,
+        price: sellingPrice,
+        original_price: originalPrice,
+        discount_percentage: finalDiscount,
+        image: imageUrl,
+        stock: parseInt(stock),
+        category,
+        qr_code: qrCodePath, // Store full path
+        qr_code_image: qrCodeImageUrl // Store QR code image URL
+      });
+    } catch (insertError) {
+      // Handle sequence out of sync error
+      if (insertError.code === '23505' && insertError.constraint === 'products_pkey') {
+        console.log('Fixing products sequence...');
+        // Get the max ID from the table
+        const maxIdResult = await db('products').max('id as max_id').first();
+        const maxId = maxIdResult?.max_id || 0;
+        // Reset the sequence to max ID + 1
+        await db.raw(`SELECT setval('products_id_seq', ${maxId + 1}, false)`);
+        // Retry the insert
+        await db('products').insert({
+          title,
+          description,
+          price: sellingPrice,
+          original_price: originalPrice,
+          discount_percentage: finalDiscount,
+          image: imageUrl,
+          stock: parseInt(stock),
+          category,
+          qr_code: qrCodePath,
+          qr_code_image: qrCodeImageUrl
+        });
+      } else {
+        throw insertError;
+      }
+    }
     
     setFlash(req, 'success', 'Product created successfully!');
     res.redirect('/admin/products');
