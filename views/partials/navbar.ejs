@@ -37,9 +37,6 @@
             </ul>
             <ul class="navbar-nav">
                 <% if (typeof userId !== 'undefined' && userId) { %>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/orders">MY ORDERS</a>
-                    </li>
                     <li class="nav-item cart-badge">
                         <a class="nav-link" href="/cart">
                             <i class="bi bi-cart" style="font-size: 1.3rem;"></i>
@@ -50,12 +47,13 @@
                             <%= typeof userName !== 'undefined' ? userName : 'Account' %>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end">
-                            <li><a class="dropdown-item" href="/orders">My Orders</a></li>
+                            <li><a class="dropdown-item" href="/orders"><i class="bi bi-bag"></i> My Orders</a></li>
+                            <li><a class="dropdown-item" href="/profile"><i class="bi bi-person"></i> My Profile</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="/auth/logout" method="POST" class="d-inline w-100">
                                     <%- include('csrf-token') %>
-                                    <button type="submit" class="dropdown-item">Logout</button>
+                                    <button type="submit" class="dropdown-item"><i class="bi bi-box-arrow-right"></i> Logout</button>
                                 </form>
                             </li>
                         </ul>

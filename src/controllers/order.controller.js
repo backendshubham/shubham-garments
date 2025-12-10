@@ -277,7 +277,8 @@ const adminUpdateOrderStatus = async (req, res) => {
 const addReview = async (req, res) => {
   try {
     const userId = req.session.userId;
-    const { productId, rating, message, orderId } = req.body;
+    const productId = req.params.id || req.body.productId; // Get from URL params or body
+    const { rating, message, orderId } = req.body;
     
     if (!productId || !rating || rating < 1 || rating > 5) {
       setFlash(req, 'error', 'Invalid review data');

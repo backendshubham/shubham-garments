@@ -66,6 +66,7 @@ app.use('/admin', require('./src/routes/admin.routes'));
 app.use('/products', require('./src/routes/product.routes'));
 app.use('/cart', require('./src/routes/cart.routes'));
 app.use('/orders', require('./src/routes/order.routes'));
+app.use('/', require('./src/routes/user.routes'));
 
 // Home route
 app.get('/', async (req, res) => {

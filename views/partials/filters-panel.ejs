@@ -45,37 +45,33 @@
         <!-- Category Filter -->
         <div class="filter-section">
             <h6 class="filter-title"><i class="bi bi-tags"></i> Categories</h6>
-            <div class="category-checkboxes">
-                <% 
-                // Parse selected categories from query string (can be array or single value)
-                let selectedCategories = [];
-                if (typeof selectedCategory !== 'undefined') {
-                    if (Array.isArray(selectedCategory)) {
-                        selectedCategories = selectedCategory;
-                    } else if (selectedCategory && selectedCategory !== 'all') {
-                        selectedCategories = [selectedCategory];
-                    }
+            <% 
+            // Parse selected categories from query string (can be array or single value)
+            let selectedCategories = [];
+            if (typeof selectedCategory !== 'undefined') {
+                if (Array.isArray(selectedCategory)) {
+                    selectedCategories = selectedCategory;
+                } else if (selectedCategory && selectedCategory !== 'all') {
+                    selectedCategories = [selectedCategory];
                 }
-                // Also check URL params for multiple categories
-                if (typeof req !== 'undefined' && req.query && req.query.categories) {
-                    const urlCategories = Array.isArray(req.query.categories) ? req.query.categories : [req.query.categories];
-                    selectedCategories = urlCategories;
-                }
-                %>
-                <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+            }
+            // Also check URL params for multiple categories
+            if (typeof req !== 'undefined' && req.query && req.query.categories) {
+                const urlCategories = Array.isArray(req.query.categories) ? req.query.categories : [req.query.categories];
+                selectedCategories = urlCategories;
+            }
+            %>
+            <% if (typeof categories !== 'undefined' && categories && categories.length > 0) { %>
+                <select class="form-select form-select-sm" id="categorySelect" name="categories[]" multiple>
                     <% categories.forEach(cat => { %>
-                        <div class="form-check mb-2">
-                            <input class="form-check-input category-checkbox" type="checkbox" name="filterCategory" id="filterCategory<%= cat.replace(/\s+/g, '') %>" 
-                                   value="<%= cat %>" <%= selectedCategories.includes(cat) ? 'checked' : '' %>>
-                            <label class="form-check-label" for="filterCategory<%= cat.replace(/\s+/g, '') %>"><%= cat %></label>
-                        </div>
+                        <option value="<%= cat %>" <%= selectedCategories.includes(cat) ? 'selected' : '' %>><%= cat %></option>
                     <% }); %>
-                <% } else { %>
-                    <div class="text-muted small p-2">
-                        <i class="bi bi-info-circle"></i> No categories available
-                    </div>
-                <% } %>
-            </div>
+                </select>
+            <% } else { %>
+                <div class="text-muted small p-2">
+                    <i class="bi bi-info-circle"></i> No categories available
+                </div>
+            <% } %>
         </div>
         
         <!-- Sort Filter -->
@@ -310,51 +306,43 @@
         z-index: 4;
     }
     
-    .category-checkboxes {
-        max-height: 200px;
-        overflow-y: auto;
-        padding-right: 0.5rem;
+    /* Select2 Styling */
+    .select2-container {
+        width: 100% !important;
     }
     
-    .category-checkboxes::-webkit-scrollbar {
-        width: 6px;
+    .select2-container--bootstrap-5 .select2-selection {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        min-height: 38px;
     }
     
-    .category-checkboxes::-webkit-scrollbar-track {
-        background: #f1f1f1;
-        border-radius: 10px;
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+        background: linear-gradient(135deg, var(--veera-accent) 0%, var(--veera-accent-dark) 100%);
+        border: none;
+        color: white;
+        border-radius: 6px;
+        padding: 4px 10px;
+        margin: 2px;
     }
     
-    .category-checkboxes::-webkit-scrollbar-thumb {
-        background: #888;
-        border-radius: 10px;
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+        color: white;
+        margin-right: 5px;
     }
     
-    .category-checkboxes::-webkit-scrollbar-thumb:hover {
-        background: #555;
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
+        color: rgba(255, 255, 255, 0.8);
     }
     
-    .form-check {
-        transition: background 0.2s;
+    .select2-dropdown {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
     }
     
-    .form-check:hover {
-        background: rgba(0,0,0,0.02);
-        border-radius: 4px;
-        padding-left: 0.25rem;
-        margin-left: -0.25rem;
-    }
-    
-    .form-check-label {
-        font-size: 0.9rem;
-        cursor: pointer;
-        user-select: none;
-        transition: color 0.2s;
-    }
-    
-    .form-check-input:checked ~ .form-check-label {
-        color: var(--veera-accent-dark);
-        font-weight: 600;
+    .select2-container--bootstrap-5 .select2-results__option--highlighted {
+        background: linear-gradient(135deg, var(--veera-accent-light) 0%, var(--veera-accent) 100%);
+        color: white;
     }
     
     .filter-actions {
@@ -514,11 +502,6 @@
             flex-shrink: 0;
         }
         
-        .category-checkboxes {
-            flex: 1;
-            min-height: 0;
-        }
-        
         .filter-title {
             font-size: 0.85rem;
             margin-bottom: 1rem;
@@ -553,32 +536,13 @@
             height: 24px;
         }
         
-        .category-checkboxes {
-            max-height: 250px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
+        .select2-container {
+            width: 100% !important;
         }
         
-        .form-check {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid #f0f0f0;
-        }
-        
-        .form-check:last-child {
-            border-bottom: none;
-        }
-        
-        .form-check-label {
+        .select2-container--bootstrap-5 .select2-selection {
+            min-height: 44px;
             font-size: 1rem;
-            padding-left: 0.5rem;
-            cursor: pointer;
-            user-select: none;
-        }
-        
-        .form-check-input {
-            width: 1.25rem;
-            height: 1.25rem;
-            cursor: pointer;
         }
         
         .form-select {
@@ -784,12 +748,82 @@
             maxPriceRange.addEventListener('input', updatePriceRange);
         }
         
+        // Initialize Select2 for categories
+        function initSelect2() {
+            const categorySelect = document.getElementById('categorySelect');
+            if (!categorySelect) return;
+            
+            // Load Select2 CSS first
+            if (!document.querySelector('link[href*="select2.min.css"]')) {
+                const select2CSS = document.createElement('link');
+                select2CSS.rel = 'stylesheet';
+                select2CSS.href = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css';
+                document.head.appendChild(select2CSS);
+            }
+            
+            if (!document.querySelector('link[href*="select2-bootstrap-5-theme"]')) {
+                const select2BootstrapCSS = document.createElement('link');
+                select2BootstrapCSS.rel = 'stylesheet';
+                select2BootstrapCSS.href = 'https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css';
+                document.head.appendChild(select2BootstrapCSS);
+            }
+            
+            // Load jQuery if not available
+            if (typeof jQuery === 'undefined') {
+                const jqueryScript = document.createElement('script');
+                jqueryScript.src = 'https://code.jquery.com/jquery-3.6.0.min.js';
+                jqueryScript.onload = function() {
+                    loadSelect2JS();
+                };
+                document.head.appendChild(jqueryScript);
+            } else {
+                loadSelect2JS();
+            }
+            
+            function loadSelect2JS() {
+                // Load Select2 JS if not already loaded
+                if (typeof jQuery === 'undefined' || !jQuery.fn.select2) {
+                    const select2JS = document.createElement('script');
+                    select2JS.src = 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js';
+                    select2JS.onload = function() {
+                        setTimeout(initializeSelect2, 100);
+                    };
+                    document.head.appendChild(select2JS);
+                } else {
+                    initializeSelect2();
+                }
+            }
+            
+            function initializeSelect2() {
+                if (typeof jQuery !== 'undefined' && jQuery.fn.select2) {
+                    jQuery('#categorySelect').select2({
+                        placeholder: 'Select categories...',
+                        allowClear: true,
+                        width: '100%',
+                        theme: 'bootstrap-5',
+                        closeOnSelect: false
+                    });
+                } else {
+                    // Retry after a short delay if jQuery or Select2 not ready
+                    setTimeout(initializeSelect2, 100);
+                }
+            }
+        }
+        
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSelect2);
+        } else {
+            initSelect2();
+        }
+        
         // Apply filters
         if (applyFiltersBtn) {
             applyFiltersBtn.addEventListener('click', function() {
                 const minPrice = document.getElementById('minPrice').value;
                 const maxPrice = document.getElementById('maxPrice').value;
-                const selectedCategories = Array.from(document.querySelectorAll('input[name="filterCategory"]:checked')).map(cb => cb.value);
+                const categorySelect = document.getElementById('categorySelect');
+                const selectedCategories = categorySelect ? Array.from(categorySelect.selectedOptions).map(opt => opt.value) : [];
                 const sortBy = document.getElementById('sortBy').value;
                 
                 const params = new URLSearchParams();
@@ -828,10 +862,13 @@
                 maxPriceRange.value = max;
                 updatePriceRange();
                 
-                // Uncheck all category checkboxes
-                document.querySelectorAll('input[name="filterCategory"]').forEach(cb => {
-                    cb.checked = false;
-                });
+                // Clear Select2 categories
+                const categorySelect = document.getElementById('categorySelect');
+                if (categorySelect && typeof jQuery !== 'undefined' && jQuery.fn.select2) {
+                    jQuery('#categorySelect').val(null).trigger('change');
+                } else if (categorySelect) {
+                    categorySelect.selectedIndex = -1;
+                }
                 document.getElementById('sortBy').value = currentPage === 'catalog' ? 'title' : 'created_at';
                 
                 window.location.href = '/' + currentPage;

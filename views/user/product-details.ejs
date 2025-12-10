@@ -158,21 +158,24 @@
                         <form action="/products/<%= product.id %>/review" method="POST">
                             <%- include('../partials/csrf-token') %>
                             <div class="mb-3">
-                                <label for="rating" class="form-label">Rating</label>
-                                <select class="form-select" id="rating" name="rating" required>
-                                    <option value="">Select Rating</option>
-                                    <option value="5">5 - Excellent</option>
-                                    <option value="4">4 - Very Good</option>
-                                    <option value="3">3 - Good</option>
-                                    <option value="2">2 - Fair</option>
-                                    <option value="1">1 - Poor</option>
-                                </select>
+                                <label class="form-label">Rating <span class="text-danger">*</span></label>
+                                <div class="star-rating-input mb-2">
+                                    <% for (let i = 5; i >= 1; i--) { %>
+                                        <input type="radio" name="rating" id="rating-<%= product.id %>-<%= i %>" value="<%= i %>" required>
+                                        <label for="rating-<%= product.id %>-<%= i %>" class="star-label">
+                                            <i class="bi bi-star-fill"></i>
+                                        </label>
+                                    <% } %>
+                                </div>
+                                <small class="text-muted">Click on a star to rate</small>
                             </div>
                             <div class="mb-3">
                                 <label for="message" class="form-label">Review</label>
-                                <textarea class="form-control" id="message" name="message" rows="3"></textarea>
+                                <textarea class="form-control" id="message" name="message" rows="3" placeholder="Share your experience with this product... (Optional)"></textarea>
                             </div>
-                            <button type="submit" class="btn btn-gradient-modern" style="color: white !important; border: none;">Submit Review</button>
+                            <button type="submit" class="btn btn-gradient-modern" style="color: white !important; border: none;">
+                                <i class="bi bi-star-fill"></i> Submit Review
+                            </button>
                         </form>
                     </div>
                 </div>
@@ -332,6 +335,97 @@
             }
         }
     }
+</script>
+
+<style>
+    /* Star Rating Input Styling */
+    .star-rating-input {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+    .star-rating-input input[type="radio"] {
+        display: none;
+    }
+    .star-rating-input .star-label {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ddd;
+        transition: color 0.2s ease, transform 0.1s ease;
+    }
+    .star-rating-input .star-label:hover,
+    .star-rating-input .star-label:hover ~ .star-label {
+        color: #ffc107;
+        transform: scale(1.1);
+    }
+    .star-rating-input input[type="radio"]:checked ~ .star-label,
+    .star-rating-input input[type="radio"]:checked + .star-label {
+        color: #ffc107;
+    }
+    .star-rating-input input[type="radio"]:checked ~ .star-label {
+        color: #ffc107;
+    }
+    
+    @media (max-width: 768px) {
+        .star-rating-input .star-label {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<script>
+    // Star rating hover effect for product details page
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.star-rating-input').forEach(container => {
+            const labels = container.querySelectorAll('.star-label');
+            const inputs = container.querySelectorAll('input[type="radio"]');
+            
+            labels.forEach((label, index) => {
+                label.addEventListener('mouseenter', function() {
+                    const rating = 5 - index;
+                    labels.forEach((l, i) => {
+                        if (5 - i <= rating) {
+                            l.style.color = '#ffc107';
+                        } else {
+                            l.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+            
+            container.addEventListener('mouseleave', function() {
+                const checkedInput = container.querySelector('input[type="radio"]:checked');
+                labels.forEach((label, index) => {
+                    if (checkedInput) {
+                        const checkedRating = parseInt(checkedInput.value);
+                        const labelRating = 5 - index;
+                        if (labelRating <= checkedRating) {
+                            label.style.color = '#ffc107';
+                        } else {
+                            label.style.color = '#ddd';
+                        }
+                    } else {
+                        label.style.color = '#ddd';
+                    }
+                });
+            });
+            
+            inputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const rating = parseInt(this.value);
+                    labels.forEach((label, index) => {
+                        const labelRating = 5 - index;
+                        if (labelRating <= rating) {
+                            label.style.color = '#ffc107';
+                        } else {
+                            label.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+        });
+    });
 </script>
 
 <%- include('../partials/footer') %>
