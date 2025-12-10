@@ -1,0 +1,112 @@
+<%- include('../partials/header') %>
+<%- include('../partials/navbar', { userId: typeof userId !== 'undefined' ? userId : null, userName: typeof userName !== 'undefined' ? userName : null }) %>
+
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h2 class="mb-4"><i class="bi bi-geo-alt"></i> Shipping Address</h2>
+                    
+                    <form action="/orders/checkout" method="POST" id="checkoutForm">
+                        <%- include('../partials/csrf-token') %>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="customer_name" class="form-label fw-semibold">Full Name <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="customer_name" name="customer_name" 
+                                       value="<%= typeof userName !== 'undefined' ? userName : '' %>" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="customer_phone" class="form-label fw-semibold">Phone Number <span class="text-danger">*</span></label>
+                                <input type="tel" class="form-control" id="customer_phone" name="customer_phone" 
+                                       pattern="[0-9]{10}" placeholder="10 digit mobile number" required>
+                                <small class="text-muted">Enter 10 digit mobile number</small>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="shipping_address" class="form-label fw-semibold">Complete Address <span class="text-danger">*</span></label>
+                            <textarea class="form-control" id="shipping_address" name="shipping_address" rows="3" 
+                                      placeholder="House/Flat No., Street, Area, Landmark" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label for="city" class="form-label fw-semibold">City <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="state" class="form-label fw-semibold">State <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="state" name="state" required>
+                            </div>
+                            
+                            <div class="col-md-4 mb-3">
+                                <label for="pincode" class="form-label fw-semibold">Pincode <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="pincode" name="pincode" 
+                                       pattern="[0-9]{6}" placeholder="6 digit pincode" required>
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-warning mt-4">
+                            <h5 class="alert-heading"><i class="bi bi-cash-coin"></i> Payment Method</h5>
+                            <p class="mb-0"><strong>Cash on Delivery (COD)</strong> - Pay when you receive your order.</p>
+                            <small>No advance payment required. Payment will be collected at the time of delivery.</small>
+                        </div>
+                        
+                        <div class="d-flex gap-3 mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg flex-fill">
+                                <i class="bi bi-check-circle"></i> Place Order
+                            </button>
+                            <a href="/cart" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left"></i> Back to Cart
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0" style="position: sticky; top: 20px;">
+                <div class="card-body p-4">
+                    <h5 class="card-title mb-4"><i class="bi bi-receipt"></i> Order Summary</h5>
+                    <% if (typeof cartItems !== 'undefined' && cartItems.length > 0) { %>
+                        <% let subtotal = 0; %>
+                        <% cartItems.forEach(item => { %>
+                            <% subtotal += parseFloat(item.price) * item.quantity; %>
+                            <div class="d-flex justify-content-between mb-3 pb-3 border-bottom">
+                                <div>
+                                    <strong><%= item.title %></strong>
+                                    <br>
+                                    <small class="text-muted">Qty: <%= item.quantity %> × ₹<%= item.price.toLocaleString('en-IN', {minimumFractionDigits: 2}) %></small>
+                                </div>
+                                <strong>₹<%= (parseFloat(item.price) * item.quantity).toLocaleString('en-IN', {minimumFractionDigits: 2}) %></strong>
+                            </div>
+                        <% }); %>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Subtotal:</span>
+                            <strong>₹<%= subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2}) %></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Shipping:</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-0">
+                            <h5>Total:</h5>
+                            <h5 class="text-primary">₹<%= subtotal.toLocaleString('en-IN', {minimumFractionDigits: 2}) %></h5>
+                        </div>
+                    <% } else { %>
+                        <p class="text-muted">No items in cart</p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
+
