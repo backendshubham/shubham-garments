@@ -298,6 +298,13 @@
             overflow: hidden;
             background: #f8f9fa;
         }
+        
+        .product-image-wrapper .sale-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            z-index: 20 !important;
+        }
         .product-image-wrapper img {
             transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
@@ -306,18 +313,22 @@
         }
         .sale-badge {
             position: absolute;
-            top: 12px;
-            left: 12px;
-            background: linear-gradient(135deg, var(--veera-red) 0%, #b71c1c 100%);
-            color: white;
-            padding: 6px 14px;
-            font-weight: 700;
-            font-size: 0.8rem;
-            z-index: 10;
-            border-radius: 20px;
-            box-shadow: var(--shadow-md);
-            letter-spacing: 0.5px;
-            animation: pulse 2s infinite;
+            top: 10px;
+            left: 10px;
+            background: linear-gradient(135deg, var(--veera-accent) 0%, var(--veera-accent-dark) 100%);
+            color: white !important;
+            padding: 4px 10px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            z-index: 15 !important;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(212, 165, 116, 0.4);
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            line-height: 1.2;
         }
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
@@ -1368,8 +1379,8 @@
             .sale-badge {
                 top: 8px;
                 left: 8px;
-                padding: 4px 10px;
-                font-size: 0.75rem;
+                padding: 3px 8px;
+                font-size: 0.65rem;
             }
         }
         
@@ -1841,8 +1852,8 @@
             .sale-badge {
                 top: 8px;
                 left: 8px;
-                padding: 4px 10px;
-                font-size: 0.75rem;
+                padding: 3px 8px;
+                font-size: 0.65rem;
             }
         }
         

@@ -62,7 +62,13 @@ const getHomePage = async (req, res) => {
       product.totalRatings = totalRatings;
     }
     
-    const categories = await db('products').distinct('category').pluck('category');
+    // Get categories that have at least 1 product
+    const categoriesWithProducts = await db('products')
+      .select('category')
+      .count('id as product_count')
+      .groupBy('category')
+      .having(db.raw('count(id)'), '>', 0);
+    const categories = categoriesWithProducts.map(cat => cat.category);
     
     res.render('user/home', {
       title: 'Shubham Garments - Home',
@@ -151,17 +157,34 @@ const getCollectionsPage = async (req, res) => {
       offset
     );
     
-    // Get categories from database (preferred) or from products
+    // Get categories that have at least 1 product
     let categories = [];
     try {
+      // First try to get from categories table and check if they have products
       const dbCategories = await db('categories')
         .where({ is_active: true })
         .orderBy('sort_order', 'asc')
         .orderBy('name', 'asc');
-      categories = dbCategories.map(cat => cat.name);
+      
+      // Check which categories have products
+      const categoriesWithProducts = await db('products')
+        .select('category')
+        .count('id as product_count')
+        .groupBy('category')
+        .having(db.raw('count(id)'), '>', 0);
+      
+      const categoriesWithProductsSet = new Set(categoriesWithProducts.map(cat => cat.category));
+      categories = dbCategories
+        .map(cat => cat.name)
+        .filter(catName => categoriesWithProductsSet.has(catName));
     } catch (err) {
       // Fallback to product categories if categories table doesn't exist
-      categories = await db('products').distinct('category').pluck('category');
+      const categoriesWithProducts = await db('products')
+        .select('category')
+        .count('id as product_count')
+        .groupBy('category')
+        .having(db.raw('count(id)'), '>', 0);
+      categories = categoriesWithProducts.map(cat => cat.category);
     }
     
     // Get price range for filter
@@ -255,17 +278,34 @@ const getCatalogPage = async (req, res) => {
       offset
     );
     
-    // Get categories from database (preferred) or from products
+    // Get categories that have at least 1 product
     let categories = [];
     try {
+      // First try to get from categories table and check if they have products
       const dbCategories = await db('categories')
         .where({ is_active: true })
         .orderBy('sort_order', 'asc')
         .orderBy('name', 'asc');
-      categories = dbCategories.map(cat => cat.name);
+      
+      // Check which categories have products
+      const categoriesWithProducts = await db('products')
+        .select('category')
+        .count('id as product_count')
+        .groupBy('category')
+        .having(db.raw('count(id)'), '>', 0);
+      
+      const categoriesWithProductsSet = new Set(categoriesWithProducts.map(cat => cat.category));
+      categories = dbCategories
+        .map(cat => cat.name)
+        .filter(catName => categoriesWithProductsSet.has(catName));
     } catch (err) {
       // Fallback to product categories if categories table doesn't exist
-      categories = await db('products').distinct('category').pluck('category');
+      const categoriesWithProducts = await db('products')
+        .select('category')
+        .count('id as product_count')
+        .groupBy('category')
+        .having(db.raw('count(id)'), '>', 0);
+      categories = categoriesWithProducts.map(cat => cat.category);
     }
     
     // Get price range for filter
@@ -463,7 +503,13 @@ const getAllProducts = async (req, res) => {
     
     products = await query.orderBy('created_at', 'desc');
     
-    const categories = await db('products').distinct('category').pluck('category');
+    // Get categories that have at least 1 product
+    const categoriesWithProducts = await db('products')
+      .select('category')
+      .count('id as product_count')
+      .groupBy('category')
+      .having(db.raw('count(id)'), '>', 0);
+    const categories = categoriesWithProducts.map(cat => cat.category);
     
     res.render('user/collections', {
       title: 'Products - Shubham Garments',

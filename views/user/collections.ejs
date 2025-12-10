@@ -120,14 +120,25 @@
             };
         %>
         <a href="/collections" class="category-filter-btn <%= isAllSelected ? 'active' : '' %>">All</a>
-        <a href="/collections?category=Jeans" class="category-filter-btn <%= isCategorySelected('Jeans') ? 'active' : '' %>">Jeans</a>
-        <a href="/collections?category=Shirt" class="category-filter-btn <%= isCategorySelected('Shirt') ? 'active' : '' %>">Shirt</a>
-        <a href="/collections?category=Sarees" class="category-filter-btn <%= isCategorySelected('Sarees') ? 'active' : '' %>">Sarees</a>
-        <a href="/collections?category=Lehenga" class="category-filter-btn <%= isCategorySelected('Lehenga') ? 'active' : '' %>">Lehenga</a>
-        <a href="/collections?category=Suits" class="category-filter-btn <%= isCategorySelected('Suits') ? 'active' : '' %>">Suits</a>
+        <% const commonCategories = ['Jeans', 'Shirt', 'Sarees', 'Lehenga', 'Suits']; %>
+        <% if (categories && categories.includes('Jeans')) { %>
+            <a href="/collections?category=Jeans" class="category-filter-btn <%= isCategorySelected('Jeans') ? 'active' : '' %>">Jeans</a>
+        <% } %>
+        <% if (categories && categories.includes('Shirt')) { %>
+            <a href="/collections?category=Shirt" class="category-filter-btn <%= isCategorySelected('Shirt') ? 'active' : '' %>">Shirt</a>
+        <% } %>
+        <% if (categories && categories.includes('Sarees')) { %>
+            <a href="/collections?category=Sarees" class="category-filter-btn <%= isCategorySelected('Sarees') ? 'active' : '' %>">Sarees</a>
+        <% } %>
+        <% if (categories && categories.includes('Lehenga')) { %>
+            <a href="/collections?category=Lehenga" class="category-filter-btn <%= isCategorySelected('Lehenga') ? 'active' : '' %>">Lehenga</a>
+        <% } %>
+        <% if (categories && categories.includes('Suits')) { %>
+            <a href="/collections?category=Suits" class="category-filter-btn <%= isCategorySelected('Suits') ? 'active' : '' %>">Suits</a>
+        <% } %>
         <% if (categories && categories.length > 0) { %>
             <% categories.forEach(cat => { %>
-                <% if (!['Jeans', 'Shirt', 'Sarees', 'Lehenga', 'Suits'].includes(cat)) { %>
+                <% if (!commonCategories.includes(cat)) { %>
                     <a href="/collections?category=<%= cat %>" class="category-filter-btn <%= isCategorySelected(cat) ? 'active' : '' %>">
                         <%= cat %>
                     </a>
@@ -244,7 +255,7 @@
             <div class="col-md-3 col-sm-6">
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="bi bi-box-seam-fill"></i>
+                        <i class="bi bi-tag-fill"></i>
                     </div>
                     <h5>Jeans</h5>
                     <p>Stylish and comfortable denim for everyday wear</p>
@@ -254,7 +265,7 @@
             <div class="col-md-3 col-sm-6">
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="bi bi-square"></i>
+                        <i class="bi bi-bag"></i>
                     </div>
                     <h5>Shirt</h5>
                     <p>Classic and modern shirts for all occasions</p>
@@ -264,7 +275,7 @@
             <div class="col-md-3 col-sm-6">
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="bi bi-gem"></i>
+                        <i class="bi bi-stars"></i>
                     </div>
                     <h5>Sarees</h5>
                     <p>Traditional and elegant sarees for special occasions</p>
@@ -274,7 +285,7 @@
             <div class="col-md-3 col-sm-6">
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="bi bi-sparkles"></i>
+                        <i class="bi bi-flower1"></i>
                     </div>
                     <h5>Lehenga</h5>
                     <p>Beautiful and graceful lehenga for celebrations</p>

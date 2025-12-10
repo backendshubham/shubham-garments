@@ -35,14 +35,25 @@
             };
         %>
         <a href="/catalog" class="category-filter-btn <%= isAllSelected ? 'active' : '' %>">All</a>
-        <a href="/catalog?category=Jeans" class="category-filter-btn <%= isCategorySelected('Jeans') ? 'active' : '' %>">Jeans</a>
-        <a href="/catalog?category=Shirt" class="category-filter-btn <%= isCategorySelected('Shirt') ? 'active' : '' %>">Shirt</a>
-        <a href="/catalog?category=Sarees" class="category-filter-btn <%= isCategorySelected('Sarees') ? 'active' : '' %>">Sarees</a>
-        <a href="/catalog?category=Lehenga" class="category-filter-btn <%= isCategorySelected('Lehenga') ? 'active' : '' %>">Lehenga</a>
-        <a href="/catalog?category=Suits" class="category-filter-btn <%= isCategorySelected('Suits') ? 'active' : '' %>">Suits</a>
+        <% const commonCategories = ['Jeans', 'Shirt', 'Sarees', 'Lehenga', 'Suits']; %>
+        <% if (categories && categories.includes('Jeans')) { %>
+            <a href="/catalog?category=Jeans" class="category-filter-btn <%= isCategorySelected('Jeans') ? 'active' : '' %>">Jeans</a>
+        <% } %>
+        <% if (categories && categories.includes('Shirt')) { %>
+            <a href="/catalog?category=Shirt" class="category-filter-btn <%= isCategorySelected('Shirt') ? 'active' : '' %>">Shirt</a>
+        <% } %>
+        <% if (categories && categories.includes('Sarees')) { %>
+            <a href="/catalog?category=Sarees" class="category-filter-btn <%= isCategorySelected('Sarees') ? 'active' : '' %>">Sarees</a>
+        <% } %>
+        <% if (categories && categories.includes('Lehenga')) { %>
+            <a href="/catalog?category=Lehenga" class="category-filter-btn <%= isCategorySelected('Lehenga') ? 'active' : '' %>">Lehenga</a>
+        <% } %>
+        <% if (categories && categories.includes('Suits')) { %>
+            <a href="/catalog?category=Suits" class="category-filter-btn <%= isCategorySelected('Suits') ? 'active' : '' %>">Suits</a>
+        <% } %>
         <% if (categories && categories.length > 0) { %>
             <% categories.forEach(cat => { %>
-                <% if (!['Jeans', 'Shirt', 'Sarees', 'Lehenga', 'Suits'].includes(cat)) { %>
+                <% if (!commonCategories.includes(cat)) { %>
                     <a href="/catalog?category=<%= cat %>" class="category-filter-btn <%= isCategorySelected(cat) ? 'active' : '' %>">
                         <%= cat %>
                     </a>
