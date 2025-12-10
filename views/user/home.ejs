@@ -191,10 +191,19 @@
                                         VIEW DETAILS
                                     </a>
                                     <% if (typeof userId !== 'undefined' && userId) { %>
-                                        <form action="/cart/add" method="POST" class="d-inline w-100">
+                                        <form action="/cart/add" method="POST" class="d-inline w-100" id="addToCartForm<%= product.id %>">
                                             <%- include('../partials/csrf-token') %>
                                             <input type="hidden" name="productId" value="<%= product.id %>">
-                                            <input type="hidden" name="quantity" value="1">
+                                            <input type="hidden" name="quantity" value="1" id="quantityInput<%= product.id %>">
+                                            <div class="quantity-controls d-flex align-items-center mb-2">
+                                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decreaseQuantity(<%= product.id %>, <%= product.stock %>)">
+                                                    <i class="bi bi-dash"></i>
+                                                </button>
+                                                <input type="number" class="form-control text-center quantity-display" value="1" min="1" max="<%= product.stock %>" id="quantityDisplay<%= product.id %>" readonly>
+                                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="increaseQuantity(<%= product.id %>, <%= product.stock %>)">
+                                                    <i class="bi bi-plus"></i>
+                                                </button>
+                                            </div>
                                             <button type="submit" class="btn btn-gradient-modern w-100">
                                                 <i class="bi bi-cart-plus"></i> ADD TO CART
                                             </button>
@@ -361,6 +370,33 @@
         // Show modal
         const modal = new bootstrap.Modal(document.getElementById('qrCodeModal'));
         modal.show();
+    }
+    
+    // Quantity control functions
+    function increaseQuantity(productId, maxStock) {
+        const display = document.getElementById('quantityDisplay' + productId);
+        const input = document.getElementById('quantityInput' + productId);
+        if (display && input) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue < maxStock) {
+                currentValue++;
+                display.value = currentValue;
+                input.value = currentValue;
+            }
+        }
+    }
+    
+    function decreaseQuantity(productId, maxStock) {
+        const display = document.getElementById('quantityDisplay' + productId);
+        const input = document.getElementById('quantityInput' + productId);
+        if (display && input) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue > 1) {
+                currentValue--;
+                display.value = currentValue;
+                input.value = currentValue;
+            }
+        }
     }
 </script>
 

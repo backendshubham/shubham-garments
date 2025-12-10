@@ -2080,6 +2080,65 @@
                 text-align: center !important;
             }
         }
+        
+        /* Quantity Controls Styling */
+        .quantity-controls {
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 0.75rem;
+            width: 100%;
+        }
+        .quantity-btn {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
+            padding: 0 !important;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #dee2e6;
+            background: white;
+            color: var(--veera-text);
+            transition: all 0.2s ease;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .quantity-btn:hover {
+            background: var(--veera-accent);
+            border-color: var(--veera-accent);
+            color: white;
+            transform: scale(1.05);
+        }
+        .quantity-btn:active {
+            transform: scale(0.95);
+        }
+        .quantity-btn i {
+            font-size: 1.2rem;
+            line-height: 1;
+        }
+        .quantity-display {
+            flex: 1;
+            max-width: 80px;
+            min-width: 60px;
+            height: 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid #dee2e6;
+            background: #f8f9fa;
+            padding: 0.5rem;
+        }
+        .quantity-display:focus {
+            outline: none;
+            border-color: var(--veera-accent);
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
     </style>
 </head>
 <body>

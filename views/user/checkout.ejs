@@ -1,6 +1,106 @@
 <%- include('../partials/header') %>
 <%- include('../partials/navbar', { userId: typeof userId !== 'undefined' ? userId : null, userName: typeof userName !== 'undefined' ? userName : null }) %>
 
+<style>
+    /* Order Status Timeline Styles */
+    .order-status-timeline {
+        padding: 10px 0;
+    }
+    .status-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+    .status-item {
+        position: relative;
+        padding-bottom: 20px;
+        display: flex;
+        align-items: flex-start;
+    }
+    .status-item:last-child {
+        padding-bottom: 0;
+    }
+    .status-item:last-child .status-line {
+        display: none;
+    }
+    .status-dot {
+        position: absolute;
+        left: -30px;
+        top: 3px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background-color: #dee2e6;
+        border: 2px solid #fff;
+        z-index: 2;
+        transition: all 0.3s ease;
+    }
+    .status-item.active .status-dot {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    }
+    .status-item.current .status-dot {
+        background-color: #198754;
+        border-color: #198754;
+        box-shadow: 0 0 0 3px rgba(25, 135, 84, 0.2);
+        width: 14px;
+        height: 14px;
+        left: -31px;
+        top: 2px;
+    }
+    .status-line {
+        position: absolute;
+        left: -25px;
+        top: 15px;
+        width: 2px;
+        height: calc(100% - 5px);
+        background-color: #dee2e6;
+        z-index: 1;
+    }
+    .status-item.active .status-line {
+        background-color: #0d6efd;
+    }
+    .status-item.current .status-line {
+        background-color: #198754;
+    }
+    .status-label {
+        font-size: 0.9rem;
+        color: #6c757d;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    .status-item.active .status-label {
+        color: #495057;
+        font-weight: 600;
+    }
+    .status-item.current .status-label {
+        color: #198754;
+        font-weight: 700;
+    }
+    
+    @media (max-width: 768px) {
+        .status-timeline {
+            padding-left: 25px;
+        }
+        .status-dot {
+            left: -25px;
+            width: 10px;
+            height: 10px;
+        }
+        .status-item.current .status-dot {
+            width: 12px;
+            height: 12px;
+            left: -26px;
+        }
+        .status-line {
+            left: -21px;
+        }
+        .status-label {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
 <div class="container my-5">
     <div class="row">
         <div class="col-lg-8 mb-4">
@@ -82,6 +182,34 @@
             <div class="card shadow-sm border-0" style="position: sticky; top: 20px;">
                 <div class="card-body p-4">
                     <h5 class="card-title mb-4"><i class="bi bi-receipt"></i> Order Summary</h5>
+                    
+                    <!-- Order Status (Pending - Before Placement) -->
+                    <div class="order-status-timeline mb-4">
+                        <h6 class="fw-semibold mb-3">Order Status</h6>
+                        <div class="status-timeline">
+                            <div class="status-item active current">
+                                <div class="status-dot"></div>
+                                <div class="status-line"></div>
+                                <div class="status-label">Pending</div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-dot"></div>
+                                <div class="status-line"></div>
+                                <div class="status-label">Placed</div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-dot"></div>
+                                <div class="status-line"></div>
+                                <div class="status-label">Shipped</div>
+                            </div>
+                            <div class="status-item">
+                                <div class="status-dot"></div>
+                                <div class="status-label">Delivered</div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mb-4">
+                    
                     <% if (typeof cartItems !== 'undefined' && cartItems.length > 0) { %>
                         <% let subtotal = 0; %>
                         <% cartItems.forEach(item => { %>

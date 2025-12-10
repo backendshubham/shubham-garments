@@ -27,12 +27,19 @@
                                     <p class="text-muted mb-0 small">₹<%= item.price.toLocaleString('en-IN', {minimumFractionDigits: 2}) %> per unit</p>
                                 </div>
                                 <div class="col-md-3 col-6 mt-3 mt-md-0">
-                                    <label class="form-label small">Quantity</label>
-                                    <form action="/cart/<%= item.id %>/update" method="POST" class="d-inline">
+                                    <label class="form-label small mb-2 d-block">Quantity</label>
+                                    <form action="/cart/<%= item.id %>/update" method="POST" class="d-inline" id="updateCartForm<%= item.id %>">
                                         <%- include('../partials/csrf-token') %>
-                                        <input type="number" name="quantity" value="<%= item.quantity %>" 
-                                               min="1" max="<%= item.stock %>" class="form-control" 
-                                               style="width: 100%; max-width: 100px;" onchange="this.form.submit()">
+                                        <input type="hidden" name="quantity" value="<%= item.quantity %>" id="cartQuantityInput<%= item.id %>">
+                                        <div class="quantity-controls d-flex align-items-center">
+                                            <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decreaseCartQuantity(<%= item.id %>, <%= item.stock %>)">
+                                                <i class="bi bi-dash"></i>
+                                            </button>
+                                            <input type="number" class="form-control text-center quantity-display" value="<%= item.quantity %>" min="1" max="<%= item.stock %>" id="cartQuantityDisplay<%= item.id %>" readonly>
+                                            <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="increaseCartQuantity(<%= item.id %>, <%= item.stock %>)">
+                                                <i class="bi bi-plus"></i>
+                                            </button>
+                                        </div>
                                     </form>
                                 </div>
                                 <div class="col-md-2 col-4 text-start text-md-end mt-3 mt-md-0">
@@ -92,6 +99,39 @@
         </div>
     <% } %>
 </div>
+
+<script>
+    // Cart quantity control functions
+    function increaseCartQuantity(itemId, maxStock) {
+        const display = document.getElementById('cartQuantityDisplay' + itemId);
+        const input = document.getElementById('cartQuantityInput' + itemId);
+        const form = document.getElementById('updateCartForm' + itemId);
+        if (display && input && form) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue < maxStock) {
+                currentValue++;
+                display.value = currentValue;
+                input.value = currentValue;
+                form.submit();
+            }
+        }
+    }
+    
+    function decreaseCartQuantity(itemId, maxStock) {
+        const display = document.getElementById('cartQuantityDisplay' + itemId);
+        const input = document.getElementById('cartQuantityInput' + itemId);
+        const form = document.getElementById('updateCartForm' + itemId);
+        if (display && input && form) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue > 1) {
+                currentValue--;
+                display.value = currentValue;
+                input.value = currentValue;
+                form.submit();
+            }
+        }
+    }
+</script>
 
 <%- include('../partials/footer') %>
 

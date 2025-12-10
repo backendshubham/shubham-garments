@@ -102,10 +102,19 @@
                                         VIEW DETAILS
                                     </a>
                                     <% if (typeof userId !== 'undefined' && userId) { %>
-                                        <form action="/cart/add" method="POST" class="d-inline w-100">
+                                        <form action="/cart/add" method="POST" class="d-inline w-100" id="addToCartForm<%= product.id %>">
                                             <%- include('../partials/csrf-token') %>
                                             <input type="hidden" name="productId" value="<%= product.id %>">
-                                            <input type="hidden" name="quantity" value="1">
+                                            <input type="hidden" name="quantity" value="1" id="quantityInput<%= product.id %>">
+                                            <div class="quantity-controls d-flex align-items-center mb-2">
+                                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decreaseQuantity(<%= product.id %>, <%= product.stock %>)">
+                                                    <i class="bi bi-dash"></i>
+                                                </button>
+                                                <input type="number" class="form-control text-center quantity-display" value="1" min="1" max="<%= product.stock %>" id="quantityDisplay<%= product.id %>" readonly>
+                                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="increaseQuantity(<%= product.id %>, <%= product.stock %>)">
+                                                    <i class="bi bi-plus"></i>
+                                                </button>
+                                            </div>
                                             <button type="submit" class="btn btn-gradient-modern w-100">
                                                 <i class="bi bi-cart-plus"></i> ADD TO CART
                                             </button>
@@ -331,10 +340,19 @@
                 `<span class="discount-badge">(-${product.discount_percentage}%)</span>` : '';
             
             const addToCartHtml = product.stock > 0 && userId ? `
-                <form action="/cart/add" method="POST" class="d-inline w-100">
+                <form action="/cart/add" method="POST" class="d-inline w-100" id="addToCartForm${product.id}">
                     <input type="hidden" name="_csrf" value="${csrfToken}">
                     <input type="hidden" name="productId" value="${product.id}">
-                    <input type="hidden" name="quantity" value="1">
+                    <input type="hidden" name="quantity" value="1" id="quantityInput${product.id}">
+                    <div class="quantity-controls d-flex align-items-center mb-2">
+                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decreaseQuantity(${product.id}, ${product.stock})">
+                            <i class="bi bi-dash"></i>
+                        </button>
+                        <input type="number" class="form-control text-center quantity-display" value="1" min="1" max="${product.stock}" id="quantityDisplay${product.id}" readonly>
+                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="increaseQuantity(${product.id}, ${product.stock})">
+                            <i class="bi bi-plus"></i>
+                        </button>
+                    </div>
                     <button type="submit" class="btn btn-gradient-modern w-100">
                         <i class="bi bi-cart-plus"></i> ADD TO CART
                     </button>
@@ -443,6 +461,52 @@
             transform: translateY(-5px);
             box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
         }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 0.75rem;
+        }
+        .quantity-btn {
+            width: 40px !important;
+            height: 40px !important;
+            padding: 0 !important;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #dee2e6;
+            background: white;
+            color: var(--veera-text);
+            transition: all 0.2s ease;
+        }
+        .quantity-btn:hover {
+            background: var(--veera-accent);
+            border-color: var(--veera-accent);
+            color: white;
+            transform: scale(1.05);
+        }
+        .quantity-btn:active {
+            transform: scale(0.95);
+        }
+        .quantity-display {
+            flex: 1;
+            max-width: 80px;
+            height: 40px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-align: center;
+            border: 2px solid #dee2e6;
+            background: #f8f9fa;
+        }
+        .quantity-display:focus {
+            outline: none;
+            border-color: var(--veera-accent);
+            box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+        }
         #productsGrid {
             margin-left: -8px;
             margin-right: -8px;
@@ -494,6 +558,35 @@
         }
     }
 </style>
+
+<script>
+    // Quantity control functions
+    function increaseQuantity(productId, maxStock) {
+        const display = document.getElementById('quantityDisplay' + productId);
+        const input = document.getElementById('quantityInput' + productId);
+        if (display && input) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue < maxStock) {
+                currentValue++;
+                display.value = currentValue;
+                input.value = currentValue;
+            }
+        }
+    }
+    
+    function decreaseQuantity(productId, maxStock) {
+        const display = document.getElementById('quantityDisplay' + productId);
+        const input = document.getElementById('quantityInput' + productId);
+        if (display && input) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue > 1) {
+                currentValue--;
+                display.value = currentValue;
+                input.value = currentValue;
+            }
+        }
+    }
+</script>
 
 <%- include('../partials/footer') %>
 
