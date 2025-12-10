@@ -134,22 +134,35 @@
     <!-- Reviews Section -->
     <div class="row mt-5">
         <div class="col-12">
-            <h3>Customer Reviews</h3>
-            <% if (avgRating > 0) { %>
-                <div class="d-flex align-items-center mb-3">
-                    <div class="star-rating me-3">
-                        <% for (let i = 1; i <= 5; i++) { %>
-                            <i class="bi bi-star<%= i <= Math.round(avgRating) ? '-fill' : '' %> text-warning" style="font-size: 1.3rem;"></i>
-                        <% } %>
+            <div class="reviews-section-header mb-4">
+                <h3 class="mb-3" style="font-weight: 700; color: var(--veera-text);">
+                    <i class="bi bi-star-fill text-warning"></i> Customer Reviews
+                </h3>
+                <% if (avgRating > 0) { %>
+                    <div class="rating-summary-card">
+                        <div class="d-flex align-items-center flex-wrap gap-3">
+                            <div class="rating-display">
+                                <div class="rating-number"><%= avgRating %></div>
+                                <div class="rating-out-of">out of 5</div>
+                            </div>
+                            <div class="rating-stars">
+                                <% for (let i = 1; i <= 5; i++) { %>
+                                    <i class="bi bi-star<%= i <= Math.round(avgRating) ? '-fill' : '' %> <%= i <= Math.round(avgRating) ? 'text-warning' : 'text-muted' %>" style="font-size: 1.5rem;"></i>
+                                <% } %>
+                            </div>
+                            <div class="rating-count">
+                                <span class="text-muted">Based on <strong><%= totalRatings || 0 %></strong> <%= totalRatings === 1 ? 'review' : 'reviews' %></span>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <strong style="font-size: 1.1rem;"><%= avgRating %></strong> out of 5 
-                        <span class="text-muted">(<%= totalRatings || 0 %> <%= totalRatings === 1 ? 'review' : 'reviews' %>)</span>
+                <% } else { %>
+                    <div class="no-rating-message">
+                        <p class="text-muted mb-0">
+                            <i class="bi bi-info-circle"></i> No reviews yet. Be the first to review this product!
+                        </p>
                     </div>
-                </div>
-            <% } else { %>
-                <p class="text-muted mb-3">No reviews yet. Be the first to review this product!</p>
-            <% } %>
+                <% } %>
+            </div>
             
             <% if (typeof userId !== 'undefined' && userId) { %>
                 <div class="card mb-4">
@@ -181,26 +194,40 @@
                 </div>
             <% } %>
             
-            <div class="list-group">
+            <div class="reviews-list mt-4">
                 <% if (reviews && reviews.length > 0) { %>
                     <% reviews.forEach(review => { %>
-                        <div class="list-group-item">
-                            <div class="d-flex justify-content-between">
-                                <h6 class="mb-1"><%= review.user_name %></h6>
-                                <small class="text-muted">
+                        <div class="review-card mb-3">
+                            <div class="review-header">
+                                <div class="reviewer-info">
+                                    <div class="reviewer-avatar">
+                                        <i class="bi bi-person-fill"></i>
+                                    </div>
+                                    <div class="reviewer-details">
+                                        <h6 class="reviewer-name mb-0"><%= review.user_name %></h6>
+                                        <small class="review-date text-muted">
+                                            <i class="bi bi-calendar3"></i> <%= new Date(review.created_at).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) %>
+                                        </small>
+                                    </div>
+                                </div>
+                                <div class="review-rating">
                                     <% for (let i = 1; i <= 5; i++) { %>
-                                        <i class="bi bi-star<%= i <= review.rating ? '-fill text-warning' : '' %>"></i>
+                                        <i class="bi bi-star<%= i <= review.rating ? '-fill' : '' %> <%= i <= review.rating ? 'text-warning' : 'text-muted' %>"></i>
                                     <% } %>
-                                </small>
+                                </div>
                             </div>
                             <% if (review.message) { %>
-                                <p class="mb-1"><%= review.message %></p>
+                                <div class="review-message mt-3">
+                                    <p class="mb-0"><%= review.message %></p>
+                                </div>
                             <% } %>
-                            <small class="text-muted"><%= new Date(review.created_at).toLocaleDateString() %></small>
                         </div>
                     <% }); %>
                 <% } else { %>
-                    <div class="list-group-item text-muted">No reviews yet. Be the first to review!</div>
+                    <div class="no-reviews-card text-center py-5">
+                        <i class="bi bi-chat-left-text" style="font-size: 3rem; color: #ddd;"></i>
+                        <p class="text-muted mt-3 mb-0">No reviews yet. Be the first to review this product!</p>
+                    </div>
                 <% } %>
             </div>
         </div>
@@ -370,6 +397,203 @@
     @media (max-width: 768px) {
         .star-rating-input .star-label {
             font-size: 1.5rem;
+        }
+    }
+    
+    /* Review Listing Styles */
+    .reviews-section-header {
+        margin-bottom: 2rem;
+    }
+    
+    .rating-summary-card {
+        background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(232, 201, 163, 0.1) 100%);
+        border: 1px solid rgba(212, 165, 116, 0.2);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+    }
+    
+    .rating-display {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+    
+    .rating-number {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--veera-accent-dark);
+        line-height: 1;
+    }
+    
+    .rating-out-of {
+        font-size: 0.9rem;
+        color: #666;
+        font-weight: 500;
+    }
+    
+    .rating-stars {
+        display: flex;
+        gap: 2px;
+    }
+    
+    .rating-count {
+        margin-left: auto;
+    }
+    
+    .no-rating-message {
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border-left: 3px solid var(--veera-accent);
+    }
+    
+    .reviews-list {
+        margin-top: 2rem;
+    }
+    
+    .review-card {
+        background: white;
+        border: 1px solid #e9ecef;
+        border-radius: 12px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .review-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        transform: translateY(-2px);
+    }
+    
+    .review-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .reviewer-info {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+    }
+    
+    .reviewer-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--veera-accent) 0%, var(--veera-accent-dark) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+    
+    .reviewer-details {
+        flex: 1;
+    }
+    
+    .reviewer-name {
+        font-weight: 600;
+        color: var(--veera-text);
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
+    }
+    
+    .review-date {
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+    }
+    
+    .review-date i {
+        font-size: 0.75rem;
+    }
+    
+    .review-rating {
+        display: flex;
+        gap: 2px;
+        flex-shrink: 0;
+    }
+    
+    .review-rating i {
+        font-size: 1.1rem;
+    }
+    
+    .review-message {
+        color: var(--veera-text);
+        line-height: 1.6;
+        font-size: 0.95rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+    
+    .review-message p {
+        margin: 0;
+        color: #555;
+    }
+    
+    .no-reviews-card {
+        background: #f8f9fa;
+        border: 2px dashed #dee2e6;
+        border-radius: 12px;
+        padding: 3rem 1rem;
+    }
+    
+    @media (max-width: 768px) {
+        .rating-summary-card {
+            padding: 1rem;
+        }
+        
+        .rating-display {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .rating-number {
+            font-size: 1.75rem;
+        }
+        
+        .rating-stars i {
+            font-size: 1.2rem !important;
+        }
+        
+        .rating-count {
+            margin-left: 0;
+            margin-top: 0.5rem;
+            width: 100%;
+        }
+        
+        .review-header {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .review-rating {
+            align-self: flex-start;
+        }
+        
+        .review-card {
+            padding: 1.25rem;
+        }
+        
+        .reviewer-avatar {
+            width: 40px;
+            height: 40px;
+            font-size: 1rem;
+        }
+        
+        .reviewer-name {
+            font-size: 0.95rem;
+        }
+        
+        .review-message {
+            font-size: 0.9rem;
         }
     }
 </style>
