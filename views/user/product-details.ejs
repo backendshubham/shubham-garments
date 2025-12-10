@@ -93,22 +93,26 @@
                     
                     <% if (product.stock > 0) { %>
                         <% if (typeof userId !== 'undefined' && userId) { %>
-                            <form action="/cart/add" method="POST" class="mb-4">
+                            <form action="/cart/add" method="POST" class="mb-4" id="addToCartForm">
                                 <%- include('../partials/csrf-token') %>
                                 <input type="hidden" name="productId" value="<%= product.id %>">
-                                <div class="row align-items-center g-3">
-                                    <div class="col-auto">
-                                        <label for="quantity" class="form-label fw-bold">Quantity:</label>
-                                    </div>
-                                    <div class="col-auto">
-                                        <input type="number" class="form-control form-control-lg" id="quantity" name="quantity" 
-                                               value="1" min="1" max="<%= product.stock %>" style="width: 100px;">
-                                    </div>
-                                    <div class="col-12 mt-3">
-                                        <button type="submit" class="btn btn-gradient-modern btn-lg w-100 py-3" style="border: none; border-radius: 12px; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s; color: white !important;">
-                                            <i class="bi bi-cart-plus"></i> Add to Cart
+                                <input type="hidden" name="quantity" value="1" id="quantityInput">
+                                <div class="mb-4">
+                                    <label class="form-label fw-bold mb-3">Quantity:</label>
+                                    <div class="quantity-controls d-flex align-items-center" style="max-width: 200px;">
+                                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decreaseQuantity(<%= product.stock %>)">
+                                            <i class="bi bi-dash"></i>
+                                        </button>
+                                        <input type="number" class="form-control text-center quantity-display" value="1" min="1" max="<%= product.stock %>" id="quantityDisplay" readonly>
+                                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="increaseQuantity(<%= product.stock %>)">
+                                            <i class="bi bi-plus"></i>
                                         </button>
                                     </div>
+                                </div>
+                                <div class="mt-3">
+                                    <button type="submit" class="btn btn-gradient-modern btn-lg w-100 py-3" style="border: none; border-radius: 12px; font-weight: 600; letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s; color: white !important;">
+                                        <i class="bi bi-cart-plus"></i> Add to Cart
+                                    </button>
                                 </div>
                             </form>
                         <% } else { %>
@@ -239,6 +243,95 @@
             }
         })();
     <% } %>
+</script>
+
+<style>
+    /* Quantity Controls Styling for Product Details */
+    .quantity-controls {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+    }
+    .quantity-btn {
+        width: 50px !important;
+        height: 50px !important;
+        min-width: 50px !important;
+        min-height: 50px !important;
+        padding: 0 !important;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #dee2e6;
+        background: white;
+        color: var(--veera-text);
+        transition: all 0.2s ease;
+        cursor: pointer;
+        flex-shrink: 0;
+    }
+    .quantity-btn:hover {
+        background: var(--veera-accent);
+        border-color: var(--veera-accent);
+        color: white;
+        transform: scale(1.05);
+    }
+    .quantity-btn:active {
+        transform: scale(0.95);
+    }
+    .quantity-btn i {
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+    .quantity-display {
+        flex: 1;
+        max-width: 100px;
+        min-width: 80px;
+        height: 50px;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1.2rem;
+        text-align: center;
+        border: 2px solid #dee2e6;
+        background: #f8f9fa;
+        padding: 0.5rem;
+    }
+    .quantity-display:focus {
+        outline: none;
+        border-color: var(--veera-accent);
+        box-shadow: 0 0 0 0.2rem rgba(212, 165, 116, 0.25);
+    }
+</style>
+
+<script>
+    // Quantity control functions for product details page
+    function increaseQuantity(maxStock) {
+        const display = document.getElementById('quantityDisplay');
+        const input = document.getElementById('quantityInput');
+        if (display && input) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue < maxStock) {
+                currentValue++;
+                display.value = currentValue;
+                input.value = currentValue;
+            }
+        }
+    }
+    
+    function decreaseQuantity(maxStock) {
+        const display = document.getElementById('quantityDisplay');
+        const input = document.getElementById('quantityInput');
+        if (display && input) {
+            let currentValue = parseInt(display.value) || 1;
+            if (currentValue > 1) {
+                currentValue--;
+                display.value = currentValue;
+                input.value = currentValue;
+            }
+        }
+    }
 </script>
 
 <%- include('../partials/footer') %>

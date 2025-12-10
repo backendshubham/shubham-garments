@@ -96,7 +96,7 @@ const createOrder = async (req, res) => {
     const [order] = await db('orders').insert({
       user_id: userId,
       total_amount: totalAmount,
-      status: 'pending',
+      status: 'processing', // Changed from 'pending' to 'processing' (which shows as "Placed" in the timeline)
       customer_name: customer_name.trim(),
       customer_phone: `+91${cleanPhone}`, // Store with +91 prefix
       shipping_address: shipping_address.trim(),

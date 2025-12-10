@@ -109,16 +109,26 @@
     
     <!-- Category Filter (Quick Access) -->
     <div class="text-center mb-5">
-        <a href="/collections" class="category-filter-btn <%= selectedCategory === 'all' ? 'active' : '' %>">All</a>
-        <a href="/collections?category=Jeans" class="category-filter-btn <%= selectedCategory === 'Jeans' ? 'active' : '' %>">Jeans</a>
-        <a href="/collections?category=Shirt" class="category-filter-btn <%= selectedCategory === 'Shirt' ? 'active' : '' %>">Shirt</a>
-        <a href="/collections?category=Sarees" class="category-filter-btn <%= selectedCategory === 'Sarees' ? 'active' : '' %>">Sarees</a>
-        <a href="/collections?category=Lehenga" class="category-filter-btn <%= selectedCategory === 'Lehenga' ? 'active' : '' %>">Lehenga</a>
-        <a href="/collections?category=Suits" class="category-filter-btn <%= selectedCategory === 'Suits' ? 'active' : '' %>">Suits</a>
+        <% 
+            // Handle both array and string for selectedCategory
+            const isAllSelected = Array.isArray(selectedCategory) ? selectedCategory.length === 0 : selectedCategory === 'all';
+            const isCategorySelected = (catName) => {
+                if (Array.isArray(selectedCategory)) {
+                    return selectedCategory.includes(catName);
+                }
+                return selectedCategory === catName;
+            };
+        %>
+        <a href="/collections" class="category-filter-btn <%= isAllSelected ? 'active' : '' %>">All</a>
+        <a href="/collections?category=Jeans" class="category-filter-btn <%= isCategorySelected('Jeans') ? 'active' : '' %>">Jeans</a>
+        <a href="/collections?category=Shirt" class="category-filter-btn <%= isCategorySelected('Shirt') ? 'active' : '' %>">Shirt</a>
+        <a href="/collections?category=Sarees" class="category-filter-btn <%= isCategorySelected('Sarees') ? 'active' : '' %>">Sarees</a>
+        <a href="/collections?category=Lehenga" class="category-filter-btn <%= isCategorySelected('Lehenga') ? 'active' : '' %>">Lehenga</a>
+        <a href="/collections?category=Suits" class="category-filter-btn <%= isCategorySelected('Suits') ? 'active' : '' %>">Suits</a>
         <% if (categories && categories.length > 0) { %>
             <% categories.forEach(cat => { %>
                 <% if (!['Jeans', 'Shirt', 'Sarees', 'Lehenga', 'Suits'].includes(cat)) { %>
-                    <a href="/collections?category=<%= cat %>" class="category-filter-btn <%= selectedCategory === cat ? 'active' : '' %>">
+                    <a href="/collections?category=<%= cat %>" class="category-filter-btn <%= isCategorySelected(cat) ? 'active' : '' %>">
                         <%= cat %>
                     </a>
                 <% } %>
@@ -190,16 +200,7 @@
                                         <form action="/cart/add" method="POST" class="d-inline w-100" id="addToCartForm<%= product.id %>">
                                             <%- include('../partials/csrf-token') %>
                                             <input type="hidden" name="productId" value="<%= product.id %>">
-                                            <input type="hidden" name="quantity" value="1" id="quantityInput<%= product.id %>">
-                                            <div class="quantity-controls d-flex align-items-center mb-2">
-                                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decreaseQuantity(<%= product.id %>, <%= product.stock %>)">
-                                                    <i class="bi bi-dash"></i>
-                                                </button>
-                                                <input type="number" class="form-control text-center quantity-display" value="1" min="1" max="<%= product.stock %>" id="quantityDisplay<%= product.id %>" readonly>
-                                                <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="increaseQuantity(<%= product.id %>, <%= product.stock %>)">
-                                                    <i class="bi bi-plus"></i>
-                                                </button>
-                                            </div>
+                                            <input type="hidden" name="quantity" value="1">
                                             <button type="submit" class="btn btn-gradient-modern w-100">
                                                 <i class="bi bi-cart-plus"></i> ADD TO CART
                                             </button>
@@ -823,16 +824,7 @@
                 <form action="/cart/add" method="POST" class="d-inline w-100" id="addToCartForm${product.id}">
                     <input type="hidden" name="_csrf" value="${csrfToken}">
                     <input type="hidden" name="productId" value="${product.id}">
-                    <input type="hidden" name="quantity" value="1" id="quantityInput${product.id}">
-                    <div class="quantity-controls d-flex align-items-center mb-2">
-                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="decreaseQuantity(${product.id}, ${product.stock})">
-                            <i class="bi bi-dash"></i>
-                        </button>
-                        <input type="number" class="form-control text-center quantity-display" value="1" min="1" max="${product.stock}" id="quantityDisplay${product.id}" readonly>
-                        <button type="button" class="btn btn-outline-secondary quantity-btn" onclick="increaseQuantity(${product.id}, ${product.stock})">
-                            <i class="bi bi-plus"></i>
-                        </button>
-                    </div>
+                    <input type="hidden" name="quantity" value="1">
                     <button type="submit" class="btn btn-gradient-modern w-100">
                         <i class="bi bi-cart-plus"></i> ADD TO CART
                     </button>
@@ -931,27 +923,6 @@
     })();
     
     // Quantity control functions
-    function increaseQuantity(productId, maxStock) {
-        const display = document.getElementById('quantityDisplay' + productId);
-        const input = document.getElementById('quantityInput' + productId);
-        let currentValue = parseInt(display.value) || 1;
-        if (currentValue < maxStock) {
-            currentValue++;
-            display.value = currentValue;
-            input.value = currentValue;
-        }
-    }
-    
-    function decreaseQuantity(productId, maxStock) {
-        const display = document.getElementById('quantityDisplay' + productId);
-        const input = document.getElementById('quantityInput' + productId);
-        let currentValue = parseInt(display.value) || 1;
-        if (currentValue > 1) {
-            currentValue--;
-            display.value = currentValue;
-            input.value = currentValue;
-        }
-    }
 </script>
 
 <%- include('../partials/footer') %>

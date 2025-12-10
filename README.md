@@ -70,6 +70,8 @@ DB_NAME=shubham_collection
 SESSION_SECRET=supersecret
 ```
 
+**Note:** The checkout page includes an interactive map for address selection using **OpenStreetMap** (completely free, no API key required). Users can click on the map or drag a marker to automatically fill in their address, city, state, and pincode.
+
 ### 4. Create PostgreSQL database
 
 ```sql
@@ -262,6 +264,7 @@ For issues or questions, please contact:
 - ✅ Added Cash on Delivery (COD) payment method notice
 - ✅ Improved mobile responsiveness across all pages
 - ✅ Added image placeholder for broken/null images
+- ✅ Added interactive map for address selection during checkout (Google Maps integration)
 - ✅ Enhanced admin dashboard with proper chart heights and data visualization
 
 ---
